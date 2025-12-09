@@ -1,0 +1,8 @@
+streamlit
+opencv-python-headless
+numpy
+google-cloud-vision
+google-auth
+spacy
+pillow
+python-dotenv
