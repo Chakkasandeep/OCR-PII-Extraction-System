@@ -15,32 +15,30 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def get_credentials():
-    """Load Google Cloud credentials from environment variables"""
     try:
         credentials_dict = {
-            "type": os.getenv("GCP_TYPE"),
-            "project_id": os.getenv("GCP_PROJECT_ID"),
-            "private_key_id": os.getenv("GCP_PRIVATE_KEY_ID"),
-            "private_key": os.getenv("GCP_PRIVATE_KEY").replace('\\n', '\n'),  # Fix newline characters
-            "client_email": os.getenv("GCP_CLIENT_EMAIL"),
-            "client_id": os.getenv("GCP_CLIENT_ID"),
-            "auth_uri": os.getenv("GCP_AUTH_URI"),
-            "token_uri": os.getenv("GCP_TOKEN_URI"),
-            "auth_provider_x509_cert_url": os.getenv("GCP_AUTH_PROVIDER_CERT_URL"),
-            "client_x509_cert_url": os.getenv("GCP_CLIENT_CERT_URL"),
-            "universe_domain": os.getenv("GCP_UNIVERSE_DOMAIN")
+            "type": st.secrets["GCP_TYPE"],
+            "project_id": st.secrets["GCP_PROJECT_ID"],
+            "private_key_id": st.secrets["GCP_PRIVATE_KEY_ID"],
+            "private_key": st.secrets["GCP_PRIVATE_KEY"].replace('\\n', '\n'),
+            "client_email": st.secrets["GCP_CLIENT_EMAIL"],
+            "client_id": st.secrets["GCP_CLIENT_ID"],
+            "auth_uri": st.secrets["GCP_AUTH_URI"],
+            "token_uri": st.secrets["GCP_TOKEN_URI"],
+            "auth_provider_x509_cert_url": st.secrets["GCP_AUTH_PROVIDER_CERT_URL"],
+            "client_x509_cert_url": st.secrets["GCP_CLIENT_CERT_URL"],
+            "universe_domain": st.secrets["GCP_UNIVERSE_DOMAIN"]
         }
-        
-        # Check if any required field is missing
-        if not all(credentials_dict.values()):
-            raise ValueError("Missing required environment variables")
-        
+
         credentials = service_account.Credentials.from_service_account_info(credentials_dict)
         return credentials
-    
+
+    except KeyError as e:
+        st.error(f"❌ Missing secret: {e}")
+        st.stop()
+
     except Exception as e:
-        st.error(f"❌ Error loading credentials: {str(e)}")
-        st.info("📁 Please ensure your .env file is configured correctly")
+        st.error(f"❌ Credential loading error: {str(e)}")
         st.stop()
 
 # ========== 1. IMAGE PREPROCESSING ==========
